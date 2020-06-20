@@ -5,11 +5,18 @@ namespace Tests\Feature\Models;
 use App\Models\Genre;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class GenreTest extends TestCase
+class GenreTeste extends TestCase
 {
     use DatabaseMigrations;
 
+    /**
+     * A basic feature test example.
+     *
+     * @return void
+     */
     public function testList()
     {
         factory(Genre::class, 1)->create();
@@ -66,5 +73,15 @@ class GenreTest extends TestCase
         foreach ($data as $key => $value) {
             $this->assertEquals($value, $genre->{$key});
         }
+    }
+
+    public function testDelete()
+    {
+        $genre = factory(Genre::class)->create();
+        $genre->delete();
+        $this->assertNull(Genre::find($genre->id));
+
+        $genre->restore();
+        $this->assertNotNull(Genre::find($genre->id));
     }
 }

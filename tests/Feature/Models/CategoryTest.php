@@ -5,11 +5,18 @@ namespace Tests\Feature\Models;
 use App\Models\Category;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CategoryTest extends TestCase
 {
     use DatabaseMigrations;
 
+    /**
+     * A basic feature test example.
+     *
+     * @return void
+     */
     public function testList()
     {
         factory(Category::class, 1)->create();

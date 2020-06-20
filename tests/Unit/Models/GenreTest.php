@@ -2,11 +2,14 @@
 
 namespace Tests\Unit\Models;
 
+use App\Models\Category;
 use App\Models\Genre;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class GenreTest extends TestCase
+class GenreTeste extends TestCase
 {
     private $genre;
 
@@ -16,7 +19,11 @@ class GenreTest extends TestCase
 
         $this->genre = new Genre();
     }
-
+    /**
+     * A basic unit test example.
+     *
+     * @return void
+     */
     public function testFillable()
     {
         $fillable = ['name', 'is_active'];
@@ -44,7 +51,7 @@ class GenreTest extends TestCase
         $this->assertEquals($cats, $this->genre->getCasts());
     }
 
-    public function testDatesAttribute()
+    public function testDatesAttibuilte()
     {
         $fieldDate = [
             'created_at',
