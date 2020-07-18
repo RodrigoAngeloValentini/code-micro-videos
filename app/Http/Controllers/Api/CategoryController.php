@@ -11,19 +11,20 @@ class CategoryController extends BasicCrudController
     private $rules = [
         'name' => 'required|max:255',
         'description' => 'nullable',
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
     ];
+
     protected function model()
     {
         return Category::class;
     }
 
-    protected function rolesStore()
+    protected function rulesStore()
     {
         return $this->rules;
     }
 
-    protected function rolesUpdate()
+    protected function rulesUpdate()
     {
         return $this->rules;
     }

@@ -2,43 +2,41 @@
 
 declare(strict_types=1);
 
-
 namespace Tests\Traits;
-
 
 use Illuminate\Foundation\Testing\TestResponse;
 
-trait TestValidation
+trait TestValidations
 {
     protected abstract function model();
     protected abstract function routeStore();
     protected abstract function routeUpdate();
 
-    protected  function assertInvalidationInStoreAction(
+    protected function assertInvalidationInStoreAction(
         array $data,
         string $rule,
-        $ruleParams = []
+        array $ruleParams = []
     ) {
         $response = $this->json('POST', $this->routeStore(), $data);
         $fields = array_keys($data);
-        $this->assertInvalidationFields($response, $fields, $rule,  $ruleParams);
+        $this->assertInvalidationFields($response, $fields, $rule, $ruleParams);
     }
 
-    protected  function assertInvalidationInUpdateAction(
+    protected function assertInvalidationInUpdateAction(
         array $data,
         string $rule,
-        $ruleParams = []
+        array $ruleParams = []
     ) {
         $response = $this->json('PUT', $this->routeUpdate(), $data);
         $fields = array_keys($data);
-        $this->assertInvalidationFields($response, $fields, $rule,  $ruleParams);
+        $this->assertInvalidationFields($response, $fields, $rule, $ruleParams);
     }
 
     protected function assertInvalidationFields(
         TestResponse $response,
         array $fields,
         string $rule,
-        array $rulesParams = []
+        array $ruleParams = []
     ) {
         $response
             ->assertStatus(422)
@@ -47,7 +45,7 @@ trait TestValidation
         foreach ($fields as $field) {
             $fieldName = str_replace('_', ' ', $field);
             $response->assertJsonFragment([
-                \Lang::get("validation.{$rule}", ['attribute' => $fieldName] + $rulesParams)
+                __("validation.{$rule}", ['attribute' => $fieldName] + $ruleParams)
             ]);
         }
     }
