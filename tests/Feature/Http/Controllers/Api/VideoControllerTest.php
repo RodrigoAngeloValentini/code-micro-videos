@@ -49,7 +49,8 @@ class VideoControllerTest extends TestCase
             ->assertJson([$this->video->toArray()]);
     }
 
-    public function testInvalidationRequired(){
+    public function testInvalidationRequired()
+    {
         $data = [
             'title' => '',
             'description' => '',
@@ -64,7 +65,8 @@ class VideoControllerTest extends TestCase
         $this->assertInvalidationInUpdateAction($data, 'required');
     }
 
-    public function testInvalidationCategoriesIdField(){
+    public function testInvalidationCategoriesIdField()
+    {
         $data = [
             "categories_id" => "a"
         ];
@@ -90,7 +92,8 @@ class VideoControllerTest extends TestCase
         $this->assertInvalidationInUpdateAction($data, 'exists');
     }
 
-    public function testInvalidationGenresIdField(){
+    public function testInvalidationGenresIdField()
+    {
         $data = [
             "genres_id" => "a"
         ];
@@ -116,7 +119,8 @@ class VideoControllerTest extends TestCase
         $this->assertInvalidationInUpdateAction($data, 'exists');
     }
 
-    public function testInvalidationMax(){
+    public function testInvalidationMax()
+    {
         $data = [
             'title' => str_repeat('a', 256)
         ];
@@ -125,7 +129,8 @@ class VideoControllerTest extends TestCase
         $this->assertInvalidationInUpdateAction($data, 'max.string', ['max' => 255]);
     }
 
-    public function testInvalidationData(){
+    public function testInvalidationData()
+    {
         $data = [
             'title' => '',
         ];
@@ -141,7 +146,8 @@ class VideoControllerTest extends TestCase
         $this->assertInvalidationInUpdateAction($data, 'in');
     }
 
-    public function testInvalidationInteger(){
+    public function testInvalidationInteger()
+    {
         $data = [
             'duration' => 's'
         ];
@@ -150,7 +156,8 @@ class VideoControllerTest extends TestCase
         $this->assertInvalidationInUpdateAction($data, 'integer');
     }
 
-    public function testInvalidationYearLaunchedField(){
+    public function testInvalidationYearLaunchedField()
+    {
         $data = [
             'year_launched' => 'a'
         ];
@@ -159,7 +166,8 @@ class VideoControllerTest extends TestCase
         $this->assertInvalidationInUpdateAction($data, 'date_format', ['format' => 'Y']);
     }
 
-    public function testInvalidationOpenedField(){
+    public function testInvalidationOpenedField()
+    {
         $data = [
             'opened' => 's'
         ];
@@ -168,7 +176,8 @@ class VideoControllerTest extends TestCase
         $this->assertInvalidationInUpdateAction($data, 'boolean');
     }
 
-    public function testInvalidationRatingField(){
+    public function testInvalidationRatingField()
+    {
         $data = [
             'rating' => '0'
         ];
@@ -177,7 +186,8 @@ class VideoControllerTest extends TestCase
         $this->assertInvalidationInUpdateAction($data, 'in');
     }
 
-    public function testSaveWithoutFiles(){
+    public function testSaveWithoutFiles()
+    {
         $category = factory(Category::class)->create();
         $genre = factory(Genre::class)->create();
 
@@ -188,23 +198,23 @@ class VideoControllerTest extends TestCase
                 'send_data' => $this->sendData + [
                     'categories_id' => [$category->id],
                     'genres_id' => [$genre->id],
-                    ],
+                ],
                 'test_data' => $this->sendData + ['opened' => false]
             ],
             [
                 'send_data' => $this->sendData + [
-                        'opened' => true,
-                        'categories_id' => [$category->id],
-                        'genres_id' => [$genre->id],
-                        ],
+                    'opened' => true,
+                    'categories_id' => [$category->id],
+                    'genres_id' => [$genre->id],
+                ],
                 'test_data' => $this->sendData + ['opened' => true]
             ],
             [
                 'send_data' => $this->sendData + [
                     'rating' => Video::RATING_LIST[1],
-                        'categories_id' => [$category->id],
-                        'genres_id' => [$genre->id],
-                        ],
+                    'categories_id' => [$category->id],
+                    'genres_id' => [$genre->id],
+                ],
                 'test_data' => $this->sendData + ['rating' => Video::RATING_LIST[1]],
             ],
         ];
@@ -247,21 +257,24 @@ class VideoControllerTest extends TestCase
         }
     }
 
-    protected function assertHasCategory($videoId, $categoryId){
+    protected function assertHasCategory($videoId, $categoryId)
+    {
         $this->assertDatabaseHas('category_video', [
             'video_id' => $videoId,
             'category_id' => $categoryId,
         ]);
     }
 
-    protected function assertHasGenre($videoId, $genreId){
+    protected function assertHasGenre($videoId, $genreId)
+    {
         $this->assertDatabaseHas('genre_video', [
             'video_id' => $videoId,
             'genre_id' => $genreId,
         ]);
     }
 
-    public function testStoreWithFiles(){
+    public function testStoreWithFiles()
+    {
         \Storage::fake();
         $files = $this->getFiles();
 
@@ -271,28 +284,30 @@ class VideoControllerTest extends TestCase
 
         $response = $this->json(
             'POST',
-            $this->routeStore(), $this->sendData + [
+            $this->routeStore(),
+            $this->sendData + [
                 'categories_id' => [$category->id],
                 'genres_id' => [$genre->id],
             ] +
-            $files
+                $files
         );
         $response->assertStatus(201);
         $id = $response->json('id');
 
-        foreach ($files as $file){
+        foreach ($files as $file) {
             \Storage::assertExists("$id/{$file->hashName()}");
         }
-
     }
 
-    protected function getFiles(){
+    protected function getFiles()
+    {
         return [
             'video_file' => UploadedFile::fake()->create('video_file.mp4')
         ];
     }
 
-    public function testSyncCategories(){
+    public function testSyncCategories()
+    {
         $categoriesId = factory(Category::class, 3)->create()->pluck('id')->toArray();
         $genre = factory(Genre::class)->create();
         $genre->categories()->sync($categoriesId);
@@ -300,10 +315,12 @@ class VideoControllerTest extends TestCase
 
         $response = $this->json(
             'POST',
-            $this->routeStore(), $this->sendData + [
+            $this->routeStore(),
+            $this->sendData + [
                 'genres_id' => [$genreId],
                 'categories_id' => [$categoriesId[0]]
-            ]);
+            ]
+        );
 
         $this->assertDatabaseHas('category_video', [
             'category_id' => $categoriesId[0],
@@ -316,7 +333,8 @@ class VideoControllerTest extends TestCase
             $this->sendData + [
                 'genres_id' => [$genreId],
                 'categories_id' => [$categoriesId[1], $categoriesId[2]]
-            ]);
+            ]
+        );
 
         $this->assertDatabaseMissing('category_video', [
             'category_id' => $categoriesId[0],
@@ -334,13 +352,14 @@ class VideoControllerTest extends TestCase
         ]);
     }
 
-    public function testSyncGenres(){
+    public function testSyncGenres()
+    {
         $genres = factory(Genre::class, 3)->create();
         $genresId = $genres->pluck('id')->toArray();
         $categoryId = factory(Category::class)->create()->id;
 
-        $genres->each(function($genre) use ($categoryId){
-           $genre->categories()->sync($categoryId);
+        $genres->each(function ($genre) use ($categoryId) {
+            $genre->categories()->sync($categoryId);
         });
 
         $response = $this->json(
@@ -391,7 +410,8 @@ class VideoControllerTest extends TestCase
             ->assertJson($this->video->toArray());
     }
 
-    public function testDestroy(){
+    public function testDestroy()
+    {
 
         $response = $this->json('DELETE', route('videos.destroy', ['video' => $this->video->id]));
 
@@ -399,15 +419,6 @@ class VideoControllerTest extends TestCase
 
         $this->assertNull(Video::find($this->video->id));
         $this->assertNotNull(Video::withTrashed()->find($this->video->id));
-    }
-
-    public function testInvalidationVideoField(){
-        $this->assertInvalidationFile(
-            'video_file',
-            'mp4',
-            12,
-            'mimetypes', ['values' => 'video/mp4']
-        );
     }
 
     protected function model()

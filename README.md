@@ -27,3 +27,6 @@ $ docker-compose up
 ```
 http://localhost:8000
 ```
+
+
+gcloud kms encrypt --ciphertext-file=./storage/credentials/google/service-account-storage.json.enc --plaintext-file=./storage/credentials/google/service-account-storage.json --location=global --keyring=service-account --key=service-account

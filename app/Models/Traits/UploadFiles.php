@@ -1,6 +1,8 @@
 <?php
 
+
 namespace App\Models\Traits;
+
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
@@ -23,6 +25,10 @@ trait UploadFiles
                 return $model->getOriginal($fileField);
             }, $filesFiltered);
         });
+    }
+
+    public function relativeFilePath($value){
+        return "{$this->uploadDir()}/{$value}";
     }
 
     /**
@@ -65,5 +71,9 @@ trait UploadFiles
             }
         }
         return $files;
+    }
+
+    protected function getFileUrl($filename){
+        return \Storage::url($this->relativeFilePath($filename));
     }
 }
