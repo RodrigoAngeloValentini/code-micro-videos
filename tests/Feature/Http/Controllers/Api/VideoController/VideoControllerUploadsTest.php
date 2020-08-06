@@ -2,9 +2,6 @@
 
 namespace Tests\Feature\Http\Controllers\Api\VideoController;
 
-
-use App\Models\Category;
-use App\Models\Genre;
 use App\Models\Video;
 use Illuminate\Foundation\Testing\TestResponse;
 use Illuminate\Http\UploadedFile;
@@ -15,16 +12,19 @@ class VideoControllerUploadsTest extends BaseVideoControllerTestCase
 {
     use TestValidations, TestUploads;
 
-    public function testInvalidationVideoField(){
+    public function testInvalidationVideoField()
+    {
         $this->assertInvalidationFile(
             'video_file',
             'mp4',
             Video::VIDEO_FILE_MAX_SIZE,
-            'mimetypes', ['values' => 'video/mp4']
+            'mimetypes',
+            ['values' => 'video/mp4']
         );
     }
 
-    public function testInvalidationThumbField(){
+    public function testInvalidationThumbField()
+    {
         $this->assertInvalidationFile(
             'thumb_file',
             'jpg',
@@ -33,7 +33,8 @@ class VideoControllerUploadsTest extends BaseVideoControllerTestCase
         );
     }
 
-    public function testInvalidationBannerField(){
+    public function testInvalidationBannerField()
+    {
         $this->assertInvalidationFile(
             'banner_file',
             'jpg',
@@ -42,35 +43,41 @@ class VideoControllerUploadsTest extends BaseVideoControllerTestCase
         );
     }
 
-    public function testInvalidationTrailerField(){
+    public function testInvalidationTrailerField()
+    {
         $this->assertInvalidationFile(
             'trailer_file',
             'mp4',
             Video::TRAILER_FILE_MAX_SIZE,
-            'mimetypes', ['values' => 'video/mp4']
+            'mimetypes',
+            ['values' => 'video/mp4']
         );
     }
 
-    public function testStoreWithFiles(){
+    public function testStoreWithFiles()
+    {
         \Storage::fake();
         $files = $this->getFiles();
         $response = $this->json(
             'POST',
-            $this->routeStore(), $this->sendData + $files
+            $this->routeStore(),
+            $this->sendData + $files
         );
 
         $response->assertStatus(201);
         $this->assertFilesOnPersist($response, $files);
     }
 
-    public function testUpdateWithFiles(){
+    public function testUpdateWithFiles()
+    {
         \Storage::fake();
         $files = $this->getFiles();
 
         $response = $this->json(
             'PUT',
-            $this->routeUpdate(), $this->sendData +
-            $files
+            $this->routeUpdate(),
+            $this->sendData +
+                $files
         );
         $response->assertStatus(200);
         $this->assertFilesOnPersist($response, $files);
@@ -81,26 +88,30 @@ class VideoControllerUploadsTest extends BaseVideoControllerTestCase
         ];
 
         $response = $this->json(
-            'PUT', $this->routeUpdate(), $this->sendData + $newFiles
+            'PUT',
+            $this->routeUpdate(),
+            $this->sendData + $newFiles
         );
 
         $response->assertStatus(200);
         $this->assertFilesOnPersist($response, \Arr::except($files, ['thumb_file', 'video_file']) + $newFiles);
 
-        $id = $response->json('id');
+        $id = $response->json('data.id');
         $video = Video::find($id);
 
         \Storage::assertMissing($video->relativeFilePath($files['thumb_file']->hashName()));
         \Storage::assertMissing($video->relativeFilePath($files['video_file']->hashName()));
     }
 
-    protected function assertFilesOnPersist(TestResponse $response, $files){
-        $id = $response->json('id');
+    protected function assertFilesOnPersist(TestResponse $response, $files)
+    {
+        $id = $response->json('id') ?? $response->json('data.id');
         $video = Video::find($id);
         $this->assertfilesExistsInStorage($video, $files);
     }
 
-    protected function getFiles(){
+    protected function getFiles()
+    {
         return [
             'thumb_file' => UploadedFile::fake()->create('thumb_file.jpg'),
             'banner_file' => UploadedFile::fake()->create('banner_file.jpg'),

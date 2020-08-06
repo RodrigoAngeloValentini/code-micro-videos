@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Tests\Traits;
 
 
@@ -12,11 +13,12 @@ trait TestSaves
     protected abstract function routeStore();
     protected abstract function routeUpdate();
 
-    protected function assertStore(array $sendData, array $testDatabase, array $testJsonData = null): TestResponse{
+    protected function assertStore(array $sendData, array $testDatabase, array $testJsonData = null): TestResponse
+    {
         /** @var @var TestResponse $response */
         $response = $this->json('POST', $this->routeStore(), $sendData);
 
-        if($response->status() !== 201){
+        if ($response->status() !== 201) {
             throw new \Exception("Response status must be 201, given {$response->status()} : \n{$response->content()}");
         }
 
@@ -26,11 +28,12 @@ trait TestSaves
         return $response;
     }
 
-    protected function assertUpdate(array $sendData, array $testDatabase, array $testJsonData = null): TestResponse{
+    protected function assertUpdate(array $sendData, array $testDatabase, array $testJsonData = null): TestResponse
+    {
         /** @var @var TestResponse $response */
         $response = $this->json('PUT', $this->routeUpdate(), $sendData);
 
-        if($response->status() !== 200){
+        if ($response->status() !== 200) {
             throw new \Exception("Response status must be 200, given {$response->status()} : \n{$response->content()}");
         }
 
@@ -40,14 +43,21 @@ trait TestSaves
         return $response;
     }
 
-    private function assertInDatabase(TestResponse$response, array $testDatabase){
+    private function assertInDatabase(TestResponse $response, array $testDatabase)
+    {
         $model = $this->model();
         $table = (new $model)->getTable();
-        $this->assertDatabaseHas($table, $testDatabase + ['id' => $response->json('id')]);
+        $this->assertDatabaseHas($table, $testDatabase + ['id' => $this->getIdFromResponse($response)]);
     }
 
-    private function assertJsonResponseContent(TestResponse$response, array $testDatabase, array $testJsonData= null){
+    private function assertJsonResponseContent(TestResponse $response, array $testDatabase, array $testJsonData = null)
+    {
         $testResponse = $testJsonData ?? $testDatabase;
-        $response->assertJsonFragment($testResponse + ['id' => $response->json('id')]);
+        $response->assertJsonFragment($testResponse + ['id' => $this->getIdFromResponse($response)]);
+    }
+
+    private function getIdFromResponse(TestResponse $response)
+    {
+        return $response->json('id') ?? $response->json('data.id');
     }
 }
