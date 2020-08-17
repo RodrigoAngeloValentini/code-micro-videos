@@ -1,2 +1,2 @@
-CREATE DATABASE IF NOT EXISTS  code_micro_videos;
-CREATE DATABASE IF NOT EXISTS  code_micro_videos_test;
+create database if not exists code_micro_videos;
+create database if not exists code_micro_videos_test;
