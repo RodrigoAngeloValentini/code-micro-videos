@@ -3,3 +3,7 @@
 .vscode/
 /backend/storage/credentials/google/service-account-storage.json
 .npm-cache/
+.idea/
+.vscode/
+.history/
+.devcontainer/ 
