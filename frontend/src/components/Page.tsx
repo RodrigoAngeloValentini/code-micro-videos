@@ -23,5 +23,6 @@ export const Page:React.FC<PageProps> = (props) => {
                 {props.children}
             </Box>
         </Container>
+
     );
 };

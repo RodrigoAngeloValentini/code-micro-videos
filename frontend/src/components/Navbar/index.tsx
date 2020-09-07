@@ -1,8 +1,7 @@
 import * as React from 'react';
-import {AppBar, Button, IconButton, MenuItem, Theme, Toolbar, Typography} from "@material-ui/core";
+import {AppBar, Button, Theme, Toolbar, Typography} from "@material-ui/core";
 import logo from '../../static/img/logo.png'
 import {makeStyles} from "@material-ui/core/styles";
-import MenuIcon from '@material-ui/icons/Menu';
 import {Menu} from "./Menu";
 
 const useStyles = makeStyles((theme : Theme) => ({
